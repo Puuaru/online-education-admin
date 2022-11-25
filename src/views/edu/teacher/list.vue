@@ -1,22 +1,22 @@
 <template>
   <div class="app-container">
-    <h2>教师列表</h2>
+    <h2>讲师列表</h2>
 
     <el-form :inline="true"
              :model="teacherQuery"
              class="demo-form-inline">
 
-      <el-form-item label="教师姓名">
+      <el-form-item label="讲师姓名">
         <el-input v-model="teacherQuery.name"
-                  placeholder="教师姓名"></el-input>
+                  placeholder="讲师姓名"></el-input>
       </el-form-item>
 
-      <el-form-item label="教师头衔">
+      <el-form-item label="讲师头衔">
         <el-select v-model="teacherQuery.level"
-                   placeholder="教师头衔">
-          <el-option label="高级教师"
+                   placeholder="讲师头衔">
+          <el-option label="高级讲师"
                      value="1"></el-option>
-          <el-option label="首席教师"
+          <el-option label="首席讲师"
                      value="2"></el-option>
         </el-select>
       </el-form-item>
@@ -74,7 +74,7 @@
                        prop="intro" />
       <el-table-column label="头衔">
         <template v-slot="slotProps">
-          {{ slotProps.row.level === 1 ? '高级教师' : '首席教师' }}
+          {{ slotProps.row.level === 1 ? '高级讲师' : '首席讲师' }}
         </template>
       </el-table-column>
       <el-table-column label="创建时间"
@@ -83,7 +83,7 @@
                        prop="gmtModified" />
       <el-table-column label="操作">
         <template v-slot="slotProps">
-          <router-link :to="'/teacher/edit' + slotProps.row.id">
+          <router-link :to="'/teacher/edit/' + slotProps.row.id">
             <el-button type="primary"
                        icon="el-icon-edit"
                        circle></el-button>
