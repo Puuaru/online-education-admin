@@ -17,7 +17,7 @@
           <el-option v-for="item in levels"
                      :value="item.value"
                      :label="item.label"
-                     ::key="item.value"></el-option>
+                     :key="item.value"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="讲师资历">
@@ -45,6 +45,7 @@ export default {
         sort: 0,
         avatar: '',
       },
+      // 由于level为int类型，需要自定义option来保证初始化时显示label中的内容
       levels: [
         {
           value: 1,
@@ -59,6 +60,8 @@ export default {
   },
   components: {},
   created() {
+    // 备注：vue-admin-template 更新中在 AppMain.vue 中为路由显示添加了 key 属性
+    // 并使用路由路径作为每个路由的 key , 因此在组件复用时提供了默认执行 created 钩子的支持
     this.initByPath()
   },
   methods: {
@@ -66,6 +69,8 @@ export default {
       if (this.$route.params && this.$route.params.id) {
         this.getTeacherById(this.$route.params.id)
       } else {
+        // 若同组件路由跳转，会导致组件没有进行实际切换而残留数据
+        // 故需要根据情况做数据清理
         this.teacherData = {}
       }
     },
@@ -110,7 +115,6 @@ export default {
     },
 
     updateTeacher() {
-      //   teacherData.gmtCreate = null
       this.teacherData.gmtModified = null
       teacher
         .updateTeacher(this.teacherData)
