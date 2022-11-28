@@ -4,13 +4,16 @@
     <el-form ref="teacher"
              :model="teacherData"
              label-width="80px">
+
       <el-form-item label="讲师名称">
         <el-input v-model="teacherData.name"></el-input>
       </el-form-item>
+
       <el-form-item label="讲师排序">
         <el-input-number v-model="teacherData.sort"
                          :min="0" />
       </el-form-item>
+
       <el-form-item label="讲师头衔">
         <el-select v-model="teacherData.level"
                    placeholder="请选择讲师头衔">
@@ -20,18 +23,40 @@
                      :key="item.value"></el-option>
         </el-select>
       </el-form-item>
+
       <el-form-item label="讲师资历">
         <el-input v-model="teacherData.career"></el-input>
       </el-form-item>
+
       <el-form-item label="讲师介绍">
         <el-input type="textarea"
                   v-model="teacherData.intro"></el-input>
       </el-form-item>
+
+      <el-form-item label="上传头像">
+        <el-upload class="avatar-uploader"
+                   :action="actionUrl"
+                   :show-file-list="false"
+                   :on-success="handleAvatarSuccess"
+                   :before-upload="beforeAvatarUpload">
+          <img v-if="teacherData.avatar"
+               :src="teacherData.avatar"
+               class="avatar">
+          <img v-else-if="uploadAvatar"
+               :src="uploadAvatar"
+               class="avatar"
+               alt="">
+          <i v-else
+             class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary"
                    @click="saveOrUpdate">保存</el-button>
         <el-button @click="backToList">取消</el-button>
       </el-form-item>
+
     </el-form>
   </div>
 </template>
@@ -56,6 +81,8 @@ export default {
           label: '首席讲师',
         },
       ],
+      uploadAvatar: '',
+      actionUrl: process.env.VUE_APP_BASE_API + '/oss/file',
     }
   },
   components: {},
@@ -133,8 +160,52 @@ export default {
     backToList() {
       this.$router.push('/teacher/table')
     },
+
+    handleAvatarSuccess(res) {
+      this.uploadAvatar = res.data.url
+      this.teacherData.avatar = res.data.url
+      this.$message({
+        message: 'uploaded',
+      })
+    },
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === 'image/jpeg'
+      const isPNG = file.type === 'image/png'
+      const isLt20M = file.size / 1024 / 1024 < 20
+
+      if (!isJPG && !isPNG) {
+        this.$message.error('上传头像图片只能是 JPG 或 PNG 格式!')
+      }
+      if (!isLt20M) {
+        this.$message.error('上传头像图片大小不能超过 20MB!')
+      }
+      return (isJPG || isPNG) && isLt20M
+    },
   },
 }
 </script>
-<style scoped lang="less">
+<style>
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.avatar-uploader .el-upload:hover {
+  border-color: #409eff;
+}
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  line-height: 178px;
+  text-align: center;
+}
+.avatar {
+  width: 178px;
+  height: 178px;
+  display: block;
+}
 </style>
