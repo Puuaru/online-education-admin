@@ -90,14 +90,14 @@ export const constantRoutes = [{
   {
     path: '/teacher',
     component: Layout,
-    redirect: '/teacher/table',
+    redirect: '/teacher/list',
     name: '讲师管理',
     meta: {
       title: '讲师管理',
       icon: 'el-icon-s-help'
     },
     children: [{
-        path: 'table',
+        path: 'list',
         name: '讲师列表',
         component: () => import('@/views/edu/teacher/list'),
         meta: {
@@ -124,6 +124,47 @@ export const constantRoutes = [{
         },
         hidden: true
       }
+    ]
+  },
+
+  {
+    path: '/subject',
+    component: Layout,
+    redirect: '/subject/list',
+    name: '课程分类管理',
+    meta: {
+      title: '课程分类管理',
+      icon: 'el-icon-s-help'
+    },
+    children: [
+    //     {
+    //     path: 'list',
+    //     name: '课程分类列表',
+    //     component: () => import('@/views/edu/subject/list'),
+    //     meta: {
+    //       title: '课程分类列表',
+    //       icon: 'table'
+    //     }
+    //   },
+      {
+        path: 'save',
+        name: '添加课程分类',
+        component: () => import('@/views/edu/subject/save'),
+        meta: {
+          title: '添加课程分类',
+          icon: 'form'
+        }
+      },
+    //   {
+    //     path: 'edit/:id',
+    //     name: '更新讲师',
+    //     component: () => import('@/views/edu/teacher/save'),
+    //     meta: {
+    //       title: '更新讲师',
+    //       noCache: true
+    //     },
+    //     hidden: true
+    //   }
     ]
   },
 

@@ -3,7 +3,7 @@ import request from '@/utils/request'
 export default {
   getTeacherListPage(current, limit, teacherQuery) {
     return request({
-      url: `/eduservice/teacher/page/condition/${current}/${limit}`,
+      url: `/edu/teacher/page/condition/${current}/${limit}`,
       method: 'post',
       data: teacherQuery
     })
@@ -11,14 +11,14 @@ export default {
 
   getTeacherById(id) {
     return request({
-        url: `/eduservice/teacher/${id}`,
+        url: `/edu/teacher/${id}`,
         method: 'get'
     })
   },
 
   saveTeacher(teacherData) {
     return request({
-        url: `/eduservice/teacher`,
+        url: `/edu/teacher`,
         method: 'post',
         data: teacherData
     })
@@ -26,7 +26,7 @@ export default {
 
   updateTeacher(teacherData) {
     return request({
-        url: `/eduservice/teacher`,
+        url: `/edu/teacher`,
         method: 'put',
         data: teacherData
     })
@@ -34,7 +34,7 @@ export default {
 
   deleteTeacher(id) {
     return request({
-        url: `/eduservice/teacher/${id}`,
+        url: `/edu/teacher/${id}`,
         method: 'delete'
     })
   }
