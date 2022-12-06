@@ -137,15 +137,15 @@ export const constantRoutes = [{
       icon: 'el-icon-s-help'
     },
     children: [
-    //     {
-    //     path: 'list',
-    //     name: '课程分类列表',
-    //     component: () => import('@/views/edu/subject/list'),
-    //     meta: {
-    //       title: '课程分类列表',
-    //       icon: 'table'
-    //     }
-    //   },
+        {
+        path: 'list',
+        name: '课程分类列表',
+        component: () => import('@/views/edu/subject/list'),
+        meta: {
+          title: '课程分类列表',
+          icon: 'tree'
+        }
+      },
       {
         path: 'save',
         name: '添加课程分类',
