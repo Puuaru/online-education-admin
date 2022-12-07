@@ -1,10 +1,10 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
-Vue.use(Router)
+Vue.use(Router);
 
 /* Layout */
-import Layout from '@/layout'
+import Layout from "@/layout";
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -30,265 +30,333 @@ import Layout from '@/layout'
  * a base page that does not have permission requirements
  * all roles can be accessed
  */
-export const constantRoutes = [{
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+export const constantRoutes = [
+  {
+    path: "/login",
+    component: () => import("@/views/login/index"),
+    hidden: true,
   },
 
   {
-    path: '/404',
-    component: () => import('@/views/404'),
-    hidden: true
+    path: "/404",
+    component: () => import("@/views/404"),
+    hidden: true,
   },
 
   {
-    path: '/',
+    path: "/",
     component: Layout,
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
-      meta: {
-        title: 'Dashboard',
-        icon: 'dashboard'
-      }
-    }]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: {
-      title: 'Example',
-      icon: 'el-icon-s-help'
-    },
-    children: [{
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: {
-          title: 'Table',
-          icon: 'table'
-        }
-      },
+    redirect: "/dashboard",
+    children: [
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
+        path: "dashboard",
+        name: "Dashboard",
+        component: () => import("@/views/dashboard/index"),
         meta: {
-          title: 'Tree',
-          icon: 'tree'
-        }
-      }
-    ]
-  },
-
-  {
-    path: '/teacher',
-    component: Layout,
-    redirect: '/teacher/list',
-    name: '讲师管理',
-    meta: {
-      title: '讲师管理',
-      icon: 'el-icon-s-help'
-    },
-    children: [{
-        path: 'list',
-        name: '讲师列表',
-        component: () => import('@/views/edu/teacher/list'),
-        meta: {
-          title: '讲师列表',
-          icon: 'table'
-        }
-      },
-      {
-        path: 'save',
-        name: '添加讲师',
-        component: () => import('@/views/edu/teacher/save'),
-        meta: {
-          title: '添加讲师',
-          icon: 'form'
-        }
-      },
-      {
-        path: 'edit/:id',
-        name: '更新讲师',
-        component: () => import('@/views/edu/teacher/save'),
-        meta: {
-          title: '更新讲师',
-          noCache: true
+          title: "Dashboard",
+          icon: "dashboard",
         },
-        hidden: true
-      }
-    ]
+      },
+    ],
   },
 
   {
-    path: '/subject',
+    path: "/example",
     component: Layout,
-    redirect: '/subject/list',
-    name: '课程分类管理',
+    redirect: "/example/table",
+    name: "Example",
     meta: {
-      title: '课程分类管理',
-      icon: 'el-icon-s-help'
+      title: "Example",
+      icon: "el-icon-s-help",
     },
     children: [
-        {
-        path: 'list',
-        name: '课程分类列表',
-        component: () => import('@/views/edu/subject/list'),
+      {
+        path: "table",
+        name: "Table",
+        component: () => import("@/views/table/index"),
         meta: {
-          title: '课程分类列表',
-          icon: 'tree'
-        }
+          title: "Table",
+          icon: "table",
+        },
       },
       {
-        path: 'save',
-        name: '添加课程分类',
-        component: () => import('@/views/edu/subject/save'),
+        path: "tree",
+        name: "Tree",
+        component: () => import("@/views/tree/index"),
         meta: {
-          title: '添加课程分类',
-          icon: 'form'
-        }
-      },
-    //   {
-    //     path: 'edit/:id',
-    //     name: '更新讲师',
-    //     component: () => import('@/views/edu/teacher/save'),
-    //     meta: {
-    //       title: '更新讲师',
-    //       noCache: true
-    //     },
-    //     hidden: true
-    //   }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [{
-      path: 'index',
-      name: 'Form',
-      component: () => import('@/views/form/index'),
-      meta: {
-        title: 'Form',
-        icon: 'form'
-      }
-    }]
-  },
-
-  {
-    path: '/nested',
-    component: Layout,
-    redirect: '/nested/menu1',
-    name: 'Nested',
-    meta: {
-      title: 'Nested',
-      icon: 'nested'
-    },
-    children: [{
-        path: 'menu1',
-        component: () => import('@/views/nested/menu1/index'), // Parent router-view
-        name: 'Menu1',
-        meta: {
-          title: 'Menu1'
+          title: "Tree",
+          icon: "tree",
         },
-        children: [{
-            path: 'menu1-1',
-            component: () => import('@/views/nested/menu1/menu1-1'),
-            name: 'Menu1-1',
+      },
+    ],
+  },
+
+  {
+    path: "/teacher",
+    component: Layout,
+    redirect: "/teacher/list",
+    name: "讲师管理",
+    meta: {
+      title: "讲师管理",
+      icon: "el-icon-s-help",
+    },
+    children: [
+      {
+        path: "list",
+        name: "讲师列表",
+        component: () => import("@/views/edu/teacher/list"),
+        meta: {
+          title: "讲师列表",
+          icon: "table",
+        },
+      },
+      {
+        path: "save",
+        name: "添加讲师",
+        component: () => import("@/views/edu/teacher/save"),
+        meta: {
+          title: "添加讲师",
+          icon: "form",
+        },
+      },
+      {
+        path: "edit/:id",
+        name: "更新讲师",
+        component: () => import("@/views/edu/teacher/save"),
+        meta: {
+          title: "更新讲师",
+          noCache: true,
+        },
+        hidden: true,
+      },
+    ],
+  },
+
+  {
+    path: "/subject",
+    component: Layout,
+    redirect: "/subject/list",
+    name: "课程分类管理",
+    meta: {
+      title: "课程分类管理",
+      icon: "el-icon-s-help",
+    },
+    children: [
+      {
+        path: "list",
+        name: "课程分类列表",
+        component: () => import("@/views/edu/subject/list"),
+        meta: {
+          title: "课程分类列表",
+          icon: "tree",
+        },
+      },
+      {
+        path: "save",
+        name: "添加课程分类",
+        component: () => import("@/views/edu/subject/save"),
+        meta: {
+          title: "添加课程分类",
+          icon: "form",
+        },
+      },
+    ],
+  },
+
+  {
+    path: "/course",
+    component: Layout,
+    redirect: "/course/list",
+    name: "课程管理",
+    meta: {
+      title: "课程管理",
+      icon: "nested",
+    },
+    children: [
+      {
+        path: "list",
+        name: "课程列表",
+        component: () => import("@/views/edu/course/list"),
+        meta: {
+          title: "课程列表",
+          icon: "table",
+        },
+      },
+      {
+        path: "info",
+        name: "添加课程基本信息",
+        component: () => import("@/views/edu/course/info"),
+        meta: {
+          title: "添加课程基本信息",
+          icon: "form",
+          noCache: true,
+        },
+      },
+      {
+        path: "info/:id",
+        name: "修改课程基本信息",
+        component: () => import("@/views/edu/course/info"),
+        meta: {
+          title: "修改课程基本信息",
+          icon: "form",
+          noCache: true,
+        },
+        hidden: true,
+      },
+      {
+        path: "chapter/:id",
+        name: "编辑课程大纲",
+        component: () => import("@/views/edu/course/chapter"),
+        meta: {
+          title: "编辑课程大纲",
+          icon: "form",
+          noCache: true,
+        },
+        hidden: true,
+      },
+      {
+        path: "publish/:id",
+        name: "发布课程",
+        component: () => import("@/views/edu/course/publish"),
+        meta: {
+          title: "发布课程",
+          icon: "form",
+          noCache: true,
+        },
+        hidden: true,
+      },
+    ],
+  },
+
+  {
+    path: "/form",
+    component: Layout,
+    children: [
+      {
+        path: "index",
+        name: "Form",
+        component: () => import("@/views/form/index"),
+        meta: {
+          title: "Form",
+          icon: "form",
+        },
+      },
+    ],
+  },
+
+  {
+    path: "/nested",
+    component: Layout,
+    redirect: "/nested/menu1",
+    name: "Nested",
+    meta: {
+      title: "Nested",
+      icon: "nested",
+    },
+    children: [
+      {
+        path: "menu1",
+        component: () => import("@/views/nested/menu1/index"), // Parent router-view
+        name: "Menu1",
+        meta: {
+          title: "Menu1",
+        },
+        children: [
+          {
+            path: "menu1-1",
+            component: () => import("@/views/nested/menu1/menu1-1"),
+            name: "Menu1-1",
             meta: {
-              title: 'Menu1-1'
-            }
+              title: "Menu1-1",
+            },
           },
           {
-            path: 'menu1-2',
-            component: () => import('@/views/nested/menu1/menu1-2'),
-            name: 'Menu1-2',
+            path: "menu1-2",
+            component: () => import("@/views/nested/menu1/menu1-2"),
+            name: "Menu1-2",
             meta: {
-              title: 'Menu1-2'
+              title: "Menu1-2",
             },
-            children: [{
-                path: 'menu1-2-1',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-                name: 'Menu1-2-1',
+            children: [
+              {
+                path: "menu1-2-1",
+                component: () =>
+                  import("@/views/nested/menu1/menu1-2/menu1-2-1"),
+                name: "Menu1-2-1",
                 meta: {
-                  title: 'Menu1-2-1'
-                }
+                  title: "Menu1-2-1",
+                },
               },
               {
-                path: 'menu1-2-2',
-                component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-                name: 'Menu1-2-2',
+                path: "menu1-2-2",
+                component: () =>
+                  import("@/views/nested/menu1/menu1-2/menu1-2-2"),
+                name: "Menu1-2-2",
                 meta: {
-                  title: 'Menu1-2-2'
-                }
-              }
-            ]
+                  title: "Menu1-2-2",
+                },
+              },
+            ],
           },
           {
-            path: 'menu1-3',
-            component: () => import('@/views/nested/menu1/menu1-3'),
-            name: 'Menu1-3',
+            path: "menu1-3",
+            component: () => import("@/views/nested/menu1/menu1-3"),
+            name: "Menu1-3",
             meta: {
-              title: 'Menu1-3'
-            }
-          }
-        ]
+              title: "Menu1-3",
+            },
+          },
+        ],
       },
       {
-        path: 'menu2',
-        component: () => import('@/views/nested/menu2/index'),
+        path: "menu2",
+        component: () => import("@/views/nested/menu2/index"),
         meta: {
-          title: 'menu2'
-        }
-      }
-    ]
+          title: "menu2",
+        },
+      },
+    ],
   },
 
   {
-    path: 'external-link',
+    path: "external-link",
     component: Layout,
-    children: [{
-      path: 'https://panjiachen.github.io/vue-element-admin-site/#/',
-      meta: {
-        title: 'External Link',
-        icon: 'link'
-      }
-    }]
+    children: [
+      {
+        path: "https://panjiachen.github.io/vue-element-admin-site/#/",
+        meta: {
+          title: "External Link",
+          icon: "link",
+        },
+      },
+    ],
   },
 
   // 404 page must be placed at the end !!!
   {
-    path: '*',
-    redirect: '/404',
-    hidden: true
-  }
-]
+    path: "*",
+    redirect: "/404",
+    hidden: true,
+  },
+];
 
-export const asyncRoutes = [
+export const asyncRoutes = [];
 
-]
+const createRouter = () =>
+  new Router({
+    // mode: 'history', // require service support
+    scrollBehavior: () => ({
+      y: 0,
+    }),
+    routes: constantRoutes,
+  });
 
-const createRouter = () => new Router({
-  // mode: 'history', // require service support
-  scrollBehavior: () => ({
-    y: 0
-  }),
-  routes: constantRoutes
-})
-
-const router = createRouter()
+const router = createRouter();
 
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
-  const newRouter = createRouter()
-  router.matcher = newRouter.matcher // reset router
+  const newRouter = createRouter();
+  router.matcher = newRouter.matcher; // reset router
 }
 
-export default router
+export default router;
