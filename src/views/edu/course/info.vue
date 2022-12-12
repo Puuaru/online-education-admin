@@ -53,7 +53,8 @@
       <!-- 课程描述 -->
       <el-form-item label="课程描述">
         <tinymce :height="300"
-                 v-model="courseInfo.description" />
+                 v-model="courseInfo.description"
+                 :offsetContents="courseInfo.description" />
       </el-form-item>
       <!-- 课程封面 -->
       <el-form-item label="课程封面">
@@ -133,10 +134,17 @@ export default {
     this.getSubject()
     if (this.$route.params && this.$route.params.id) {
       this.courseInfo.id = this.$route.params.id
+      this.getCourseInfo(this.courseInfo.id)
     }
   },
 
   methods: {
+    getCourseInfo(id) {
+      course.getCourseInfo(id).then((result) => {
+        this.courseInfo = result.data.items
+      })
+    },
+
     getTeacher() {
       course.getAllTeachaer().then((result) => {
         this.teacherList = result.data.items
@@ -164,9 +172,13 @@ export default {
     next() {
       this.$refs.info.validate((data) => {
         if (data) {
+          // 当有id时进行update操作
           if (this.$route.params && this.$route.params.id) {
-            // 当有id时进行update操作
-            // TODO
+            course.updateCourseInfo(this.courseInfo).then((result) => {
+              this.$router.push({
+                path: '/course/chapter/' + this.$route.params.id,
+              })
+            })
           } else {
             course.saveCourseInfo(this.courseInfo).then((result) => {
               this.$router.push({

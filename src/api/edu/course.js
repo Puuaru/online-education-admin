@@ -16,4 +16,17 @@ export default {
       method: "get",
     });
   },
+  updateCourseInfo(courseInfo) {
+    return request({
+      url: `/edu/course/`,
+      method: "put",
+      data: courseInfo,
+    });
+  },
+  getCourseInfo(id) {
+    return request({
+      url: `/edu/course/${id}`,
+      method: "get",
+    });
+  },
 };
