@@ -35,6 +35,7 @@
                    placeholder="请选择课程讲师">
           <el-option :label="teacher.name"
                      :value="teacher.id"
+                     :key="teacher.id"
                      v-for="teacher in teacherList"></el-option>
         </el-select>
       </el-form-item>
@@ -49,11 +50,10 @@
                          :min="0"
                          placeholder="请输入课程价格" />
       </el-form-item>
-      <!-- TODO -->
       <!-- 课程描述 -->
       <el-form-item label="课程描述">
-        <el-input v-model="courseInfo.description"
-                  placeholder="请输入课程描述"></el-input>
+        <tinymce :height="300"
+                 v-model="courseInfo.description" />
       </el-form-item>
       <!-- 课程封面 -->
       <el-form-item label="课程封面">
@@ -88,6 +88,7 @@
 <script>
 import course from '@/api/edu/course'
 import subject from '@/api/edu/subject'
+import tinymce from '@/components/Tinymce'
 
 export default {
   data() {
@@ -105,7 +106,7 @@ export default {
         subjectId: '',
         subjectParentId: '',
       },
-      teacherList: {},
+      teacherList: [],
       subjectList: [],
       rules: {
         title: [{ required: true, trigger: 'blur', message: '标题必须输入' }],
@@ -125,7 +126,7 @@ export default {
     }
   },
 
-  components: {},
+  components: { tinymce },
 
   created() {
     this.getTeacher()
@@ -193,5 +194,8 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
+.tinymce-container {
+  line-height: 29px;
+}
 </style>

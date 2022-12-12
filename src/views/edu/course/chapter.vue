@@ -38,9 +38,13 @@ export default {
       })
     },
     previous() {
-      this.$router.push({
-        path: '/course/info/' + '1',
-      })
+      if (this.$route.params && this.$route.params.id) {
+        // 当有id时进行update操作
+        // TODO
+        this.$router.push({
+          path: '/course/info/' + this.$route.params.id,
+        })
+      }
     },
   },
 }
