@@ -131,6 +131,9 @@ export default {
   created() {
     this.getTeacher()
     this.getSubject()
+    if (this.$route.params && this.$route.params.id) {
+      this.courseInfo.id = this.$route.params.id
+    }
   },
 
   methods: {
