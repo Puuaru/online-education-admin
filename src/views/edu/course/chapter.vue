@@ -32,11 +32,13 @@
       <div class="dialog-footer"
            slot="footer">
         <el-button @click="dialogChapter = false">取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary"
+                   @click="chapterDialogPost()">确定</el-button>
       </div>
     </el-dialog>
 
     <!-- 小节信息弹框 -->
+    <!-- TODO -->
     <el-dialog title="小节信息填写"
                :visible.sync="dialogVideo"></el-dialog>
 
@@ -45,11 +47,13 @@
              default-expand-all
              node-key="id"
              :props="defaultProps"
-             expand-on-click-node="false">
+             show-checkbox
+             :expand-on-click-node="false">
       <span class="custom-tree-node"
             slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
         <span class="custom-tree-button">
+
           <!-- 针对章节的按钮 -->
           <el-button type="text"
                      v-if="!data.isVideo"
@@ -59,12 +63,14 @@
           <el-button type="text"
                      v-if="!data.isVideo"
                      icon="el-icon-edit"
-                     size="mini">修改章节</el-button>
+                     size="mini"
+                     @click="chapterOpenEdit(data)">修改章节</el-button>
 
           <el-button type="text"
                      v-if="!data.isVideo"
                      icon="el-icon-delete"
-                     size="mini">删除章节</el-button>
+                     size="mini"
+                     @click="removeChapter(data)">删除章节</el-button>
 
           <!-- 针对小节的按钮 -->
           <el-button type="text"
@@ -75,7 +81,8 @@
           <el-button type="text"
                      v-if="data.isVideo"
                      icon="el-icon-delete"
-                     size="mini">删除小节</el-button>
+                     size="mini"
+                     @click="removeVideo(data)">删除小节</el-button>
         </span>
       </span>
     </el-tree>
@@ -102,13 +109,23 @@ export default {
   name: '',
   data() {
     return {
+      disableSaveButton: false,
       active: 1,
-      chapter: {},
+      chapter: {
+        // 当前正在操作的chapter数据
+        sort: 0,
+      },
+      video: {
+        // 当前正在操作的video数据
+        sort: 0,
+        isFree: 1,
+      },
       courseDetails: [],
       defaultProps: {
         children: 'children',
         label: 'title',
       },
+      // 弹框是否显示
       dialogChapter: false,
       dialogVideo: false,
       chapterRules: {
@@ -116,21 +133,30 @@ export default {
           { require: true, trigger: 'blur', message: '章节标题必须输入' },
         ],
       },
+      videoRules: {
+        title: [
+          { require: true, trigger: 'blur', message: '小节标题必须输入' },
+        ],
+      },
     }
   },
+
   components: {},
+
   created() {
     if (this.$route.params && this.$route.params.id) {
       this.chapter.courseId = this.$route.params.id
       this.getCourseDetails(this.chapter.courseId)
     }
   },
+
   methods: {
     next() {
       this.$router.push({
-        path: '/course/publish/' + '1',
+        path: '/course/publish/' + this.chapter.courseId,
       })
     },
+
     previous() {
       if (this.$route.params && this.$route.params.id) {
         // 当有id时进行update操作
@@ -140,16 +166,114 @@ export default {
         })
       }
     },
+
     getCourseDetails(courseId) {
       chapter.getChapterVideo(courseId).then((result) => {
         this.courseDetails = result.data.items
         for (let i = 0; i < this.courseDetails.length; i++) {
           for (let j = 0; j < this.courseDetails[i].children.length; j++) {
-            // 为视频加标识
+            // 为小节（视频）加标识
             this.courseDetails[i].children[j].isVideo = true
           }
         }
       })
+    },
+
+    // ============ 章节操作 ============
+    removeChapter(data) {
+      this.$confirm('此操作将永久删除该章节及其全部小节，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          // TODO 删除小节
+          chapter.deleteChapter(data.id).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功！',
+            })
+            this.getCourseDetails(this.chapter.courseId)
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除',
+          })
+        })
+    },
+
+    updateChapter() {
+      chapter.updateChapter(this.chapter).then(() => {
+        this.$message({
+          type: 'success',
+          message: '修改成功！',
+        })
+        this.getCourseDetails(this.chapter.courseId)
+        // 清空表单数据
+        this.chapter.title = ''
+        this.chapter.sort = 0
+      })
+    },
+
+    saveChapter() {
+      chapter.saveChapter(this.chapter).then(() => {
+        this.$message({
+          type: 'success',
+          message: '添加成功！',
+        })
+        this.getCourseDetails(this.chapter.courseId)
+        // 清空表单数据
+        this.chapter.title = ''
+        this.chapter.sort = 0
+      })
+    },
+
+    chapterDialogPost() {
+      this.$refs.chapter.validate((data) => {
+        if (data) {
+          this.chapter.gmtCreate = null
+          this.chapter.gmtModified = null
+          if (this.chapter.id) {
+            this.updateChapter()
+          } else {
+            this.saveChapter()
+          }
+          this.dialogChapter = false
+          // TODO: 若将清空表单数据的操作放在这个函数下会出现线程同步问题
+        }
+      })
+    },
+
+    chapterOpenEdit(data) {
+      this.dialogChapter = true
+      // 获取选中的chapter数据
+      chapter.getChapter(data.id).then((result) => {
+        this.chapter = result.data.items
+      })
+    },
+
+    // ============ 小节操作 ============
+    removeVideo(data) {
+      this.$confirm('此操作将永久删除该小节，是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+        .then(() => {
+          // TODO 删除小节
+          this.$message({
+            type: 'success',
+            message: '删除成功！',
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除',
+          })
+        })
     },
   },
 }

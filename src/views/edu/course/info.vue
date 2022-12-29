@@ -175,6 +175,7 @@ export default {
           // 当有id时进行update操作
           if (this.$route.params && this.$route.params.id) {
             course.updateCourseInfo(this.courseInfo).then((result) => {
+              this.courseInfo = result.data.items
               this.$router.push({
                 path: '/course/chapter/' + this.$route.params.id,
               })
