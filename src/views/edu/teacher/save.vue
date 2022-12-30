@@ -158,7 +158,7 @@ export default {
     },
 
     backToList() {
-      this.$router.push('/teacher/table')
+      this.$router.push('/teacher/list')
     },
 
     handleAvatarSuccess(res) {

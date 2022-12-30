@@ -10,7 +10,7 @@
     </el-steps>
 
     <el-button type="text"
-               @click="dialogChapter = true"
+               @click="chapterOpenAdd()"
                icon="el-icon-plus">添加章节</el-button>
 
     <!-- 章节信息弹框 -->
@@ -40,7 +40,34 @@
     <!-- 小节信息弹框 -->
     <!-- TODO -->
     <el-dialog title="小节信息填写"
-               :visible.sync="dialogVideo"></el-dialog>
+               :visible.sync="dialogVideo">
+      <el-form :model="video"
+               ref="video"
+               label-width="120px"
+               :rules="videoRules">
+        <el-form-item label="小节标题"
+                      prop="title">
+          <el-input v-model="video.title"></el-input>
+        </el-form-item>
+        <el-form-item label="小节排序">
+          <el-input-number v-model="video.sort"
+                           :min="0"></el-input-number>
+        </el-form-item>
+        <el-form-item label="是否免费">
+          <el-radio-group v-model="video.isFree">
+            <el-radio :label="1">免费</el-radio>
+            <el-radio :label="0">收费</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="上传视频"></el-form-item>
+      </el-form>
+      <div class="dialog-footer"
+           slot="footer">
+        <el-button @click="dialogVideo = false">取消</el-button>
+        <el-button type="primary"
+                   @click="videoDialogPost()">确定</el-button>
+      </div>
+    </el-dialog>
 
     <el-tree :data="courseDetails"
              ref="tree"
@@ -58,7 +85,8 @@
           <el-button type="text"
                      v-if="!data.isVideo"
                      icon="el-icon-plus"
-                     size="mini">添加小节</el-button>
+                     size="mini"
+                     @click="videoOpenAdd(data)">添加小节</el-button>
 
           <el-button type="text"
                      v-if="!data.isVideo"
@@ -76,7 +104,8 @@
           <el-button type="text"
                      v-if="data.isVideo"
                      icon="el-icon-edit"
-                     size="mini">修改小节</el-button>
+                     size="mini"
+                     @click="videoOpenEdit(data)">修改小节</el-button>
 
           <el-button type="text"
                      v-if="data.isVideo"
@@ -87,7 +116,8 @@
       </span>
     </el-tree>
 
-    <el-form label-width="120px">
+    <el-form label-width="120px"
+             style="text-align:center">
       <el-form-item>
         <el-button style="margin-top: 12px;"
                    @click="previous"
@@ -105,6 +135,8 @@
 
 <script>
 import chapter from '@/api/edu/chapter'
+import video from '@/api/edu/video'
+
 export default {
   name: '',
   data() {
@@ -113,10 +145,12 @@ export default {
       active: 1,
       chapter: {
         // 当前正在操作的chapter数据
+        title: '',
         sort: 0,
       },
       video: {
         // 当前正在操作的video数据
+        title: '',
         sort: 0,
         isFree: 1,
       },
@@ -146,6 +180,7 @@ export default {
   created() {
     if (this.$route.params && this.$route.params.id) {
       this.chapter.courseId = this.$route.params.id
+      this.video.courseId = this.$route.params.id
       this.getCourseDetails(this.chapter.courseId)
     }
   },
@@ -187,7 +222,6 @@ export default {
         type: 'warning',
       })
         .then(() => {
-          // TODO 删除小节
           chapter.deleteChapter(data.id).then(() => {
             this.$message({
               type: 'success',
@@ -211,9 +245,6 @@ export default {
           message: '修改成功！',
         })
         this.getCourseDetails(this.chapter.courseId)
-        // 清空表单数据
-        this.chapter.title = ''
-        this.chapter.sort = 0
       })
     },
 
@@ -224,9 +255,6 @@ export default {
           message: '添加成功！',
         })
         this.getCourseDetails(this.chapter.courseId)
-        // 清空表单数据
-        this.chapter.title = ''
-        this.chapter.sort = 0
       })
     },
 
@@ -254,6 +282,14 @@ export default {
       })
     },
 
+    chapterOpenAdd() {
+      // 清空表单数据
+      this.chapter.title = ''
+      this.chapter.sort = 0
+      // 弹框
+      this.dialogChapter = true
+    },
+
     // ============ 小节操作 ============
     removeVideo(data) {
       this.$confirm('此操作将永久删除该小节，是否继续？', '提示', {
@@ -262,10 +298,12 @@ export default {
         type: 'warning',
       })
         .then(() => {
-          // TODO 删除小节
-          this.$message({
-            type: 'success',
-            message: '删除成功！',
+          video.deleteVideo(data.id).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功！',
+            })
+            this.getCourseDetails(this.chapter.courseId)
           })
         })
         .catch(() => {
@@ -274,6 +312,56 @@ export default {
             message: '已取消删除',
           })
         })
+    },
+
+    updateVideo() {
+      video.updateVideo(this.video).then(() => {
+        this.$message({
+          type: 'success',
+          message: '修改成功！',
+        })
+        this.getCourseDetails(this.chapter.courseId)
+      })
+    },
+
+    saveVideo() {
+      video.saveVideo(this.video).then(() => {
+        this.$message({
+          type: 'success',
+          message: '修改成功！',
+        })
+        this.getCourseDetails(this.chapter.courseId)
+      })
+    },
+
+    videoDialogPost() {
+      this.$refs.video.validate((data) => {
+        if (data) {
+          // TODO: 视频上传
+          this.video.gmtCreate = null
+          this.video.gmtModified = null
+          if (this.video.id) {
+            this.updateVideo()
+          } else {
+            this.saveVideo()
+          }
+          this.dialogVideo = false
+        }
+      })
+    },
+
+    videoOpenEdit(data) {
+      this.dialogVideo = true
+      video.getVideo(data.id).then((result) => {
+        this.video = result.data.items
+      })
+    },
+
+    videoOpenAdd(data) {
+      this.video.title = ''
+      this.video.sort = 0
+      this.video.chapterId = data.id
+      this.dialogVideo = true
     },
   },
 }
