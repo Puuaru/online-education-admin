@@ -29,4 +29,10 @@ export default {
       method: "get",
     });
   },
+  getPublishInfo(id) {
+    return request({
+      url: `/edu/course/publish/${id}`,
+      method: "get",
+    });
+  },
 };
