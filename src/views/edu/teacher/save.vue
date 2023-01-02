@@ -142,6 +142,7 @@ export default {
     },
 
     updateTeacher() {
+      this.teacherData.gmtCreate = null
       this.teacherData.gmtModified = null
       teacher
         .updateTeacher(this.teacherData)
