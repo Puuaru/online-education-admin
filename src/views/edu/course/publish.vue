@@ -28,7 +28,8 @@
     <div>
       <el-button @click="previous()">上一步</el-button>
       <el-button :disabled="disableSaveButton"
-                 type="primary">发布课程</el-button>
+                 type="primary"
+                 @click="publishCourse()">发布课程</el-button>
     </div>
   </div>
 </template>
@@ -63,6 +64,14 @@ export default {
     previous() {
       this.$router.push({
         path: '/course/chapter/' + this.courseId,
+      })
+    },
+
+    publishCourse() {
+      course.publishCourse(this.courseId).then(() => {
+        this.$router.push({
+          path: '/course/list/',
+        })
       })
     },
   },
