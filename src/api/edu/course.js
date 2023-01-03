@@ -9,6 +9,7 @@ export default {
       data: courseInfo,
     });
   },
+
   // 查询所有讲师
   getAllTeachaer() {
     return request({
@@ -16,6 +17,7 @@ export default {
       method: "get",
     });
   },
+
   updateCourseInfo(courseInfo) {
     return request({
       url: `/edu/course/`,
@@ -23,16 +25,40 @@ export default {
       data: courseInfo,
     });
   },
+
   getCourseInfo(id) {
     return request({
       url: `/edu/course/${id}`,
       method: "get",
     });
   },
+
   getPublishInfo(id) {
     return request({
       url: `/edu/course/publish/${id}`,
       method: "get",
+    });
+  },
+
+  publishCourse(id) {
+    return request({
+      url: `/edu/course/publish/${id}`,
+      method: "put",
+    });
+  },
+
+  getPage(current, limit, query) {
+    return request({
+      url: `/edu/course/condition/${current}/${limit}`,
+      method: "post",
+      data: query,
+    });
+  },
+
+  deleteCourse(id) {
+    return request({
+      url: `/edu/course/${id}`,
+      method: "delete",
     });
   },
 };

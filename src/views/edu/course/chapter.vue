@@ -360,6 +360,7 @@ export default {
       this.video.title = ''
       this.video.sort = 0
       this.video.chapterId = data.id
+      this.video.id = ''
       this.dialogVideo = true
     },
   },
