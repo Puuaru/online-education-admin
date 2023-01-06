@@ -377,10 +377,12 @@ export default {
     },
 
     videoOpenAdd(data) {
+      // 初始化
       this.video.title = ''
       this.video.sort = 0
       this.video.chapterId = data.id
       this.video.id = ''
+      this.fileList = []
       this.dialogVideo = true
     },
 
@@ -396,8 +398,10 @@ export default {
     },
 
     handleUploadRemove() {
-      this.video.videoSourceId = ''
-      this.video.videoOriginalName = ''
+      video.deleteCloudVideo(this.video.videoSourceId).then(() => {
+        this.video.videoSourceId = ''
+        this.video.videoOriginalName = ''
+      })
     },
   },
 }

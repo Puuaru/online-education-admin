@@ -27,4 +27,10 @@ export default {
       data: video,
     });
   },
+  deleteCloudVideo(id) {
+    return request({
+      url: `/vod/${id}`,
+      method: "delete",
+    });
+  },
 };
