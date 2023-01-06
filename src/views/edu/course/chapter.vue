@@ -59,7 +59,19 @@
             <el-radio :label="0">收费</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="上传视频"></el-form-item>
+        <el-form-item label="上传视频">
+          <el-upload class="upload-video"
+                     :action="actionUrl"
+                     :limit="1"
+                     :before-upload="beforeUpload"
+                     :on-success="handleUploadSuccess"
+                     :on-remove="handleUploadRemove"
+                     :file-list="fileList"
+                     accept="video/*">
+            <el-button type="primary"
+                       size="small">点击上传</el-button>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <div class="dialog-footer"
            slot="footer">
@@ -141,7 +153,10 @@ export default {
   data() {
     return {
       disableSaveButton: false,
+      uploading: false, // 上传中标识
+      actionUrl: process.env.VUE_APP_BASE_API + '/vod/',
       active: 1,
+      fileList: [],
       chapter: {
         // 当前正在操作的chapter数据
         title: '',
@@ -268,7 +283,6 @@ export default {
             this.saveChapter()
           }
           this.dialogChapter = false
-          // TODO: 若将清空表单数据的操作放在这个函数下会出现线程同步问题
         }
       })
     },
@@ -336,7 +350,13 @@ export default {
     videoDialogPost() {
       this.$refs.video.validate((data) => {
         if (data) {
-          // TODO: 视频上传
+          if (this.uploading) {
+            this.$message({
+              type: 'error',
+              message: '视频还在上传中，请稍等',
+            })
+            return false
+          }
           this.video.gmtCreate = null
           this.video.gmtModified = null
           if (this.video.id) {
@@ -362,6 +382,22 @@ export default {
       this.video.chapterId = data.id
       this.video.id = ''
       this.dialogVideo = true
+    },
+
+    beforeUpload() {
+      this.uploading = true
+    },
+
+    handleUploadSuccess(result, file) {
+      this.video.videoSourceId = result.data.videoId
+      this.video.videoOriginalName = file.name
+      this.uploading = false
+      console.log(this.video)
+    },
+
+    handleUploadRemove() {
+      this.video.videoSourceId = ''
+      this.video.videoOriginalName = ''
     },
   },
 }
