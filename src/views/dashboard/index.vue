@@ -44,9 +44,12 @@ import * as echarts from "echarts";
 export default {
   data() {
     return {
-      data: "",
+      xData: "",
+      yData: "",
       searchProps: {
         type: "login_num",
+        // begin: "",
+        // end: "",
       },
     };
   },
@@ -54,7 +57,9 @@ export default {
   computed: {},
 
   mounted() {
-    this.setupChart()
+    this.getData().then(() => {
+      this.setupChart();
+    });
   },
 
   created() {
@@ -69,16 +74,23 @@ export default {
     let date = `${year}-${month}-${day}`;
 
     // this.initData(date);
-    // this.setupChart();
   },
 
   methods: {
     getData() {
-      dashboard
-        .getDataByType("login_num", "2021-04-17", "2021-04-21")
-        .then((respond) => {
-          this.data = respond.data;
-        });
+      return new Promise((resolve) => {
+        dashboard
+          .getDataByType(
+            this.searchProps.type,
+            this.searchProps.begin,
+            this.searchProps.end
+          )
+          .then((respond) => {
+            this.xData = respond.data.items.dateList;
+            this.yData = respond.data.items.countList;
+            resolve();
+          });
+      });
     },
 
     initData(date) {
@@ -88,7 +100,7 @@ export default {
     },
 
     setupChart() {
-      let chart = echarts.init(document.getElementById('chart-main'));
+      let chart = echarts.init(document.getElementById("chart-main"));
       let chartTitle;
       switch (this.searchProps.type) {
         case "login_num":
@@ -108,6 +120,49 @@ export default {
       let options = {
         title: {
           text: chartTitle,
+          left: "center",
+          top: 2,
+        },
+        dataZoom: [
+          {
+            show: true,
+            height: 25,
+            xAxisIndex: [0],
+            bottom: 15,
+            start: 0,
+            end: 100,
+            handleIcon:
+              "path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z",
+            handleSize: "110%",
+            handleStyle: {
+              color: "#d3dee5",
+            },
+            textStyle: {
+              color: "#1f1a1a",
+            },
+            borderColor: "#90979c",
+          },
+        ],
+        grid: {
+          left: "5%",
+          right: "5%",
+          containLabel: true,
+        },
+        xAxis: {
+          type: "category",
+          boundaryGap: false,
+          data: this.xData,
+        },
+        yAxis: {
+          type: "value",
+        },
+        series: {
+          type: "line",
+          data: this.yData,
+        },
+        tooltip: {
+          show: true,
+          trigger: "axis",
         },
       };
       chart.setOption(options);
