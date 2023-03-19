@@ -8,9 +8,9 @@ export default {
     });
   },
 
-  getDataByType(type, begin, end) {
+  getDataByType(begin, end) {
     return request({
-      url: `/statistic/${type}/${begin}/${end}`,
+      url: `/statistic/${begin}/${end}`,
       method: "get",
     });
   },

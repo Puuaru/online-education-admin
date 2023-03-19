@@ -2,15 +2,6 @@
   <div class="dashboard-container">
     <div class="dashboard-selector">
       <el-form inline>
-        <el-form-item label="查询">
-          <el-select placeholder="-" v-model="searchProps.type">
-            <el-option label="注册人数" value="register_num"></el-option>
-            <el-option label="登录人数" value="login_num"></el-option>
-            <el-option label="视频播放次数" value="video_view_num"></el-option>
-            <el-option label="课程数量" value="course_num"></el-option>
-          </el-select>
-        </el-form-item>
-
         <el-form-item label="时间范围">
           <el-date-picker
             type="date"
@@ -45,9 +36,9 @@ export default {
   data() {
     return {
       xData: "",
-      yData: "",
+      yData: [],
+      types: [],
       searchProps: {
-        type: "login_num",
         // begin: "",
         // end: "",
       },
@@ -73,7 +64,7 @@ export default {
     let year = originalDate.getFullYear();
     let date = `${year}-${month}-${day}`;
 
-    // this.initData(date);
+    this.initData(date);
   },
 
   methods: {
@@ -81,13 +72,23 @@ export default {
       return new Promise((resolve) => {
         dashboard
           .getDataByType(
-            this.searchProps.type,
             this.searchProps.begin,
             this.searchProps.end
           )
           .then((respond) => {
-            this.xData = respond.data.items.dateList;
-            this.yData = respond.data.items.countList;
+            let result = respond.data.items;
+            this.xData = result.dateList;
+            this.yData = [];
+            this.types = [];
+            let length = Object.keys(result.countList).length;
+            for (let i = 0; i < length; i++) {
+              this.types.push(result.countList[i].type)
+              this.yData.push({
+                type: "line",
+                name: result.countList[i].type,
+                data: result.countList[i].data,
+              });
+            }
             resolve();
           });
       });
@@ -128,7 +129,7 @@ export default {
             show: true,
             height: 25,
             xAxisIndex: [0],
-            bottom: 15,
+            bottom: 30,
             start: 0,
             end: 100,
             handleIcon:
@@ -143,23 +144,32 @@ export default {
             borderColor: "#90979c",
           },
         ],
-        grid: {
-          left: "5%",
-          right: "5%",
-          containLabel: true,
-        },
-        xAxis: {
-          type: "category",
-          boundaryGap: false,
-          data: this.xData,
-        },
-        yAxis: {
-          type: "value",
-        },
-        series: {
-          type: "line",
-          data: this.yData,
-        },
+        grid: [
+          {
+            left: "5%",
+            right: "5%",
+            containLabel: true,
+          },
+        ],
+        xAxis: [
+          {
+            type: "category",
+            boundaryGap: false,
+            data: this.xData,
+          },
+        ],
+        yAxis: [
+          {
+            type: "value",
+          },
+        ],
+        series: this.yData,
+        legend: [
+          {
+            data: this.types,
+            top: "bottom",
+          },
+        ],
         tooltip: {
           show: true,
           trigger: "axis",
