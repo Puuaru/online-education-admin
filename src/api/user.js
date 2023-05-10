@@ -2,15 +2,15 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/edu/user/login',
+    url: '/acl/index/login',
     method: 'post',
-    data
+    data: data
   })
 }
 
 export function getInfo(token) {
   return request({
-    url: '/edu/user/info',
+    url: '/acl/user/info',
     method: 'get',
     params: {
       token
@@ -20,7 +20,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/edu/user/logout',
+    url: '/acl/index/logout',
     method: 'post'
   })
 }
