@@ -198,6 +198,42 @@ export const constantRoutes = [
   },
 
   {
+    path: "/acl",
+    component: Layout,
+    name: "管理菜单",
+    meta: {
+      title: "管理菜单",
+      icon: "password",
+    },
+    children: [
+      {
+        path: "permission",
+        name: "权限管理",
+        meta: {
+          title: "权限管理",
+          icon: "password"
+        },
+      },
+      {
+        path: "user",
+        name: "用户管理",
+        meta: {
+          title: "用户管理",
+          icon: "user"
+        },
+      },
+      {
+        path: "role",
+        name: "角色管理",
+        meta: {
+          title: "角色管理",
+          icon: "user"
+        },
+      },
+    ],
+  },
+
+  {
     path: "/form",
     component: Layout,
     children: [
