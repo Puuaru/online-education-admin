@@ -207,8 +207,9 @@ export const constantRoutes = [
     },
     children: [
       {
-        path: "permission",
+        path: "/permission/list",
         name: "权限管理",
+        component: () => import("@/views/acl/permission/list"),
         meta: {
           title: "权限管理",
           icon: "password"
