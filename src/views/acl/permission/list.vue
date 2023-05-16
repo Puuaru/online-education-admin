@@ -16,7 +16,7 @@
           <!-- 添加菜单 -->
           <el-button
             v-if="operation.row.level === 0 || operation.row.level === 1"
-            @click="addMenu"
+            @click="openDialogForAppend('menu', operation.row.id)"
             type="success"
             size="mini"
             icon="el-icon-circle-plus"
@@ -25,7 +25,7 @@
           <!-- 添加功能 -->
           <el-button
             v-if="operation.row.level === 2"
-            @click="addFeat"
+            @click="openDialogForAppend('permission', operation.row.id)"
             type="success"
             size="mini"
             icon="el-icon-circle-plus-outline"
@@ -34,7 +34,7 @@
           <!-- 修改菜单 -->
           <el-button
             v-if="operation.row.level === 1 || operation.row.level === 2"
-            @click="updateMenu"
+            @click="openDialogForUpdate('menu', operation.row)"
             type="success"
             size="mini"
             icon="el-icon-edit"
@@ -43,7 +43,7 @@
           <!-- 修改功能 -->
           <el-button
             v-if="operation.row.level === 3"
-            @click="updateFeat"
+            @click="openDialogForUpdate('permission', operation.row)"
             type="success"
             size="mini"
             icon="el-icon-edit"
@@ -52,7 +52,7 @@
           <!-- 删除 -->
           <el-button
             v-if="operation.row.level !== 0"
-            @click="deleteAny"
+            @click="remove(operation.row.id)"
             type="danger"
             size="mini"
             icon="el-icon-delete"
@@ -75,7 +75,7 @@
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
-        <el-button>取消</el-button>
+        <el-button @click="resetData">取消</el-button>
         <el-button type="primary" @click="submitMenuForm()">提交</el-button>
       </div>
     </el-dialog>
@@ -92,20 +92,20 @@
         :rules="permissionValidateRules"
       >
         <el-form-item label="权限功能名称" prop="name">
-          <el-input :model="currentPermission.name" />
+          <el-input v-model="currentPermission.name" />
         </el-form-item>
         <el-form-item label="访问路径" prop="path">
-          <el-input :model="currentPermission.path" />
+          <el-input v-model="currentPermission.path" />
         </el-form-item>
         <el-form-item label="组件路径" prop="component">
-          <el-input :model="currentPermission.component" />
+          <el-input v-model="currentPermission.component" />
         </el-form-item>
         <el-form-item label="权限值" prop="permissionValue">
-          <el-input :model="currentPermission.component" />
+          <el-input v-model="currentPermission.permissionValue" />
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
-        <el-button>取消</el-button>
+        <el-button @click="resetData">取消</el-button>
         <el-button type="primary" @click="submitPermissionForm()"
           >提交</el-button
         >
@@ -117,24 +117,12 @@
 <script>
 import permissionApi from "@/api/acl/permission";
 
-const menuInit = {
-  pid: 0,
-  type: 1,
-  name: "",
-  path: "",
-  component: "",
-};
-const permissionInit = {
-  pid: 0,
-  type: 2,
-};
-
 export default {
   data() {
     return {
       permissions: [],
-      currentMenu: menuInit,
-      currentPermission: permissionInit,
+      currentMenu: {},
+      currentPermission: {},
       menuEditVisible: true,
       permissionEditVisible: false,
       menuValidateRules: {
@@ -154,7 +142,7 @@ export default {
 
   created() {
     this.getPermissionList();
-    console.log(this.permissions);
+    this.resetData();
   },
 
   methods: {
@@ -164,39 +152,131 @@ export default {
       });
     },
 
-    // 用以标识和测试的方法
-    addMenu() {
-      console.log("add menu");
+    remove(permissionId) {
+      this.$confirm("当前操作将删除此记录及其全部子记录，是否继续？", "警告", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      }).then(() => {
+        permissionApi.remove(permissionId).then(() => {
+          this.$message({
+            type: "success",
+            message: "删除成功",
+          });
+          this.resetData();
+          this.getPermissionList();
+        });
+      });
     },
-    addFeat() {
-      console.log("add feat");
+
+    update(permission) {
+      permission.gmtCreate = "";
+      permission.gmtModified = "";
+      permissionApi.update(permission).then(() => {
+        this.$message({
+          type: "success",
+          message: "修改成功",
+        });
+        this.resetData();
+        this.getPermissionList();
+      });
     },
-    deleteAny() {
-      console.log("delete");
+
+    save(permission) {
+      permissionApi
+        .add(permission)
+        .then(() => {
+          this.$message({
+            type: "success",
+            message: "添加成功",
+          });
+          this.resetData();
+          this.getPermissionList();
+        })
+        .catch((reason) => {
+          console.log(reason);
+          this.$message({
+            type: "info",
+            message: "添加失败",
+          });
+        });
     },
-    updateMenu() {
-      console.log("update menu");
+
+    openDialogForUpdate(flag, data) {
+      switch (flag) {
+        case "menu":
+          this.menuEditVisible = true;
+          this.currentMenu = data;
+          break;
+        case "permission":
+          this.permissionEditVisible = true;
+          this.currentPermission = data;
+          break;
+      }
     },
-    updateFeat() {
-      console.log("update feat");
+
+    openDialogForAppend(flag, parentId) {
+      switch (flag) {
+        case "menu":
+          this.menuEditVisible = true;
+          this.currentMenu.pid = parentId;
+          break;
+        case "permission":
+          this.permissionEditVisible = true;
+          this.currentPermission.pid = parentId;
+          break;
+      }
     },
+
+    resetData() {
+      this.currentMenu = this.generateTemplateData("menu");
+      this.currentPermission = this.generateTemplateData("permission");
+      this.menuEditVisible = false;
+      this.permissionEditVisible = false;
+    },
+
+    submitMenuForm() {
+      this.$refs.menuForm.validate((valid) => {
+        if (valid) {
+          if (!this.currentMenu.id) {
+            this.save(this.currentMenu);
+          } else {
+            this.update(this.currentMenu);
+          }
+        }
+      });
+    },
+
     submitPermissionForm() {
       this.$refs.permissionForm.validate((valid) => {
         if (valid) {
           if (!this.currentPermission.id) {
-            console.log(this.currentPermission);
+            // 添加新功能
+            this.save(this.currentPermission);
+          } else {
+            // 更新已有功能
+            this.update(this.currentPermission);
           }
         }
       });
     },
-    submitMenuForm() {
-      this.$refs.menuForm.validate((valid) => {
-        if (valid) {
-          if (!this.currentPermission.id) {
-            console.log(this.currentMenu);
-          }
-        }
-      });
+
+    generateTemplateData(type) {
+      let template = {
+        pid: 0,
+        name: "",
+        path: "",
+        component: "",
+      };
+      switch (type) {
+        case "menu":
+          template.type = 1;
+          break;
+        case "permission":
+          template.type = 2;
+          break;
+      }
+      return template;
     },
   },
 };
