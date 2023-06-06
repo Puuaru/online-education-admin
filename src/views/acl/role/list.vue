@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <!-- 输入查询 -->
+    <!-- 添加按钮 -->
     <!-- 列出数据 -->
     <el-table :data="pageInfo.items" border>
       <el-table-column label="序号">
@@ -33,6 +34,25 @@
       layout="total, prev, pager, next, jumper"
       style="padding: 32px 0; text-align: center"
     />
+    <!-- 角色属性修改表单 -->
+    <el-dialog
+      :visible="dialogVisible"
+      :title="dialogTitle"
+      :before-close="refreshData"
+    >
+      <el-form :model="role" ref="role">
+        <el-form-item label="角色名称" prop="roleName" label-width="120px">
+          <el-input v-model="role.roleName" auto-complete="on"></el-input>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark" label-width="120px">
+          <el-input v-model="role.remark" auto-complete="on"></el-input>
+        </el-form-item>
+      </el-form>
+      <div class="dialog-footer">
+        <el-button @click="refreshData">取消</el-button>
+        <el-button @click="dialogConfirm" type="primary">确定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -47,6 +67,13 @@ export default {
       limit: 10,
       nameQuery: "",
       pageInfo: {}, // items: 实际数据；total: 数据总量
+      dialogVisible: true,
+      dialogTitle: "",
+      // role update
+      role: {
+        id: "",
+        remark: "",
+      },
     };
   },
 
@@ -101,11 +128,86 @@ export default {
       this.refreshData();
     },
 
+    async updateRole() {
+      this.role.gmtModified = "";
+      try {
+        const result = await roleApis.updateRole(this.role);
+        if (result.code !== 200) {
+          Message({
+            message: result.msg,
+            type: "error",
+          });
+        } else {
+          Message({
+            message: "操作成功",
+            type: "success",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        Message({
+          message: error,
+          type: "error",
+        });
+      }
+    },
+
+    async addRole() {
+      try {
+        const result = await roleApis.addRole(this.role);
+        if (result.code !== 200) {
+          Message({
+            message: result.msg,
+            type: "error",
+          });
+        } else {
+          Message({
+            message: "操作成功",
+            type: "success",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        Message({
+          message: error,
+          type: "error",
+        });
+      }
+    },
+
+    dialogConfirm() {
+      this.$refs.role.validate((valid) => {
+        if (valid) {
+          if (this.role.id) {
+            this.updateRole();
+          } else {
+            this.addRole();
+          }
+        }
+      });
+      this.refreshData();
+    },
+
     refreshData() {
       this.pageInfo = {};
       this.nameQuery = "";
+      this.dialogVisible = false;
       this.getRoleCondition();
     },
+
+    openDiagram(type, data) {
+      switch (type) {
+        case "update":
+          this.role = data;
+          this.dialogTitle = "修改角色";
+          break;
+        case "add":
+          this.dialogTitle = "新增角色";
+          break;
+      }
+      this.dialogVisible = true;
+    }
+
   },
 };
 </script>
