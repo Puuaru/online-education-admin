@@ -224,8 +224,9 @@ export const constantRoutes = [
         },
       },
       {
-        path: "role",
+        path: "/role/list",
         name: "角色管理",
+        component: () => import("@/views/acl/role/list"),
         meta: {
           title: "角色管理",
           icon: "user"
