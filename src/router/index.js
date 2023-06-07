@@ -232,6 +232,15 @@ export const constantRoutes = [
           icon: "user"
         },
       },
+      {
+        path: "/role/perm-manager/:id",
+        name: "角色权限管理",
+        component: () => import("@/views/acl/role/permManager"),
+        meta: {
+          title: "角色权限管理",
+          icon: "user"
+        },
+      },
     ],
   },
 

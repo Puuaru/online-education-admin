@@ -12,17 +12,26 @@
       <el-table-column label="角色名" prop="roleName"></el-table-column>
       <el-table-column label="备注" prop="remark"></el-table-column>
       <el-table-column label="操作">
-        <!-- 这里需要做一次前端鉴权 -->
+        <!-- TODO: 这里需要做一次前端鉴权 -->
         <template slot-scope="cur">
           <!-- 修改角色权限列表 -->
+          <router-link :to="`perm-manager/${cur.row.id}`" style="margin-right: 12px;">
+            <el-button type="info" size="mini" icon="el-icon-lock" />
+          </router-link>
           <!-- 修改角色属性 -->
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="openDiagram('update', cur.row)"
+          />
           <!-- 删除角色 -->
           <el-button
             type="danger"
             size="mini"
             icon="el-icon-delete"
             @click="deleteRoleById(cur.row.id)"
-          ></el-button>
+          />
         </template>
       </el-table-column>
     </el-table>
@@ -67,7 +76,7 @@ export default {
       limit: 10,
       nameQuery: "",
       pageInfo: {}, // items: 实际数据；total: 数据总量
-      dialogVisible: true,
+      dialogVisible: false,
       dialogTitle: "",
       // role update
       role: {
@@ -175,8 +184,8 @@ export default {
       }
     },
 
-    dialogConfirm() {
-      this.$refs.role.validate((valid) => {
+    async dialogConfirm() {
+      await this.$refs.role.validate((valid) => {
         if (valid) {
           if (this.role.id) {
             this.updateRole();
@@ -185,7 +194,8 @@ export default {
           }
         }
       });
-      this.refreshData();
+      setTimeout(this.refreshData, 250);
+      // this.refreshData();
     },
 
     refreshData() {
@@ -206,12 +216,9 @@ export default {
           break;
       }
       this.dialogVisible = true;
-    }
-
+    },
   },
 };
 </script>
 
-<style scoped>
-/* code... */
-</style>
+<style scoped></style>
