@@ -1,7 +1,16 @@
 <template>
   <div class="app-container">
+    <el-form :inline="true" class="demo-form-inline">
     <!-- 输入查询 -->
+      <el-form-item>
+        <el-input v-model="nameQuery" placeholder="输入查询的角色名称" />
+      </el-form-item>
+      <el-button @click="getRoleCondition()" icon="el-icon-search" type="primary">查询</el-button>
+      <el-button @click="refreshData" type="default">清空</el-button>
+    </el-form>
+
     <!-- 添加按钮 -->
+
     <!-- 列出数据 -->
     <el-table :data="pageInfo.items" border>
       <el-table-column label="序号">
@@ -35,6 +44,7 @@
         </template>
       </el-table-column>
     </el-table>
+
     <!-- 分页 -->
     <el-pagination
       :page-size="limit"
@@ -43,6 +53,7 @@
       layout="total, prev, pager, next, jumper"
       style="padding: 32px 0; text-align: center"
     />
+
     <!-- 角色属性修改表单 -->
     <el-dialog
       :visible="dialogVisible"
@@ -68,7 +79,7 @@
 <script>
 import roleApis from "@/api/acl/role";
 import { Message } from "element-ui";
-// code...
+
 export default {
   data() {
     return {
