@@ -1,15 +1,21 @@
 <template>
   <div class="app-container">
     <el-form :inline="true" class="demo-form-inline">
-    <!-- 输入查询 -->
+      <!-- 输入查询 -->
       <el-form-item>
         <el-input v-model="nameQuery" placeholder="输入查询的角色名称" />
       </el-form-item>
-      <el-button @click="getRoleCondition()" icon="el-icon-search" type="primary">查询</el-button>
+      <el-button
+        @click="getRoleCondition()"
+        icon="el-icon-search"
+        type="primary"
+        >查询</el-button
+      >
       <el-button @click="refreshData" type="default">清空</el-button>
+      <el-button type="primary" @click="openDiagram('add', null)"
+        >添加角色</el-button
+      >
     </el-form>
-
-    <!-- 添加按钮 -->
 
     <!-- 列出数据 -->
     <el-table :data="pageInfo.items" border>
@@ -24,7 +30,10 @@
         <!-- TODO: 这里需要做一次前端鉴权 -->
         <template slot-scope="cur">
           <!-- 修改角色权限列表 -->
-          <router-link :to="`perm-manager/${cur.row.id}`" style="margin-right: 12px;">
+          <router-link
+            :to="`perm-manager/${cur.row.id}`"
+            style="margin-right: 12px"
+          >
             <el-button type="info" size="mini" icon="el-icon-lock" />
           </router-link>
           <!-- 修改角色属性 -->

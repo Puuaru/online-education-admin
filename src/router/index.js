@@ -240,6 +240,7 @@ export const constantRoutes = [
           title: "角色权限管理",
           icon: "user"
         },
+        hidden: true
       },
     ],
   },
